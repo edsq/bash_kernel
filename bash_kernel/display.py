@@ -61,6 +61,7 @@ import re
 _TEXT_SAVED_IMAGE = "bash_kernel: saved image data to: "
 _TEXT_SAVED_HTML = "bash_kernel: saved html data to: "
 _TEXT_SAVED_JAVASCRIPT = "bash_kernel: saved javascript data to: "
+_TEXT_SAVED_MARKDOWN = "bash_kernel: saved markdown data to: "
 
 def _build_cmd_for_type(display_cmd, line_prefix):
     return """
@@ -136,6 +137,20 @@ def display_data_for_js(filename):
     content = {
         'data': {
             'text/javascript': html_data.decode('utf-8'),
+        },
+        'metadata': {}
+    }
+    return content
+
+def display_data_for_markdown(filename):
+    """Display markdown."""
+    with open(filename, 'rb') as f:
+        data = f.read()
+
+    _unlink_if_temporary(filename)
+    content = {
+        'data': {
+            'text/markdown': data.decode('utf-8')
         },
         'metadata': {}
     }
@@ -220,5 +235,10 @@ CONTENT_DATA_PREFIXES = {
         'display_cmd': 'displayJS',
         'display_data_fn': display_data_for_js,
         'capability': 'javascript',
+    },
+    _TEXT_SAVED_MARKDOWN: {
+        'display_cmd': 'displayMD',
+        'display_data_fn': display_data_for_markdown,
+        'capability': 'markdown',
     }
 }
